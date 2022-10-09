@@ -51,7 +51,9 @@ def latest_versions(session):
             a_tags = ul.find_all('a')
             break
         else:
-            raise ListPythonVersionsNotFound("Не найден список с версиями Python.")
+            raise ListPythonVersionsNotFound(
+                "Не найден список с версиями Python."
+            )
     results = [('Ссылка на документацию', 'Версия', 'Статус')]
     pattern = r'Python (?P<version>\d\.\d+) \((?P<status>.*)\)'
     for a_tag in a_tags:
@@ -100,7 +102,8 @@ def parse_pep_status(count_status_in_card, peps_row, session):
                 card_status = tag.next_sibling.next_sibling.string
                 count_status_in_card[card_status] = count_status_in_card.get(
                     card_status, 0) + 1
-                if len(peps_row[i].td.text) != 1 and card_status[0] != peps_row[i].td.text[1:]:
+                if len(peps_row[i].td.text) != 1 and\
+                        card_status[0] != peps_row[i].td.text[1:]:
                     table_status = peps_row[i].td.text[1:]
                     logging.info(
                         '\n'
@@ -110,6 +113,7 @@ def parse_pep_status(count_status_in_card, peps_row, session):
                         f'Ожидаемые статусы: '
                         f'{EXPECTED_STATUS[table_status]}\n'
                     )
+
 
 def pep(session):
     response = get_response(session, MAIN_PEP_URL)
