@@ -87,8 +87,7 @@ def download(session):
 
 
 def parse_pep_status(count_status_in_card, peps_row, session):
-    #for i in tqdm(range(1, len(peps_row))):
-    for i in range(1, len(peps_row)):
+    for i in tqdm(range(1, len(peps_row))):
         pep_href = peps_row[i].a['href']
         pep_link = urljoin(MAIN_PEP_URL, pep_href)
         response = get_response(session, pep_link)
