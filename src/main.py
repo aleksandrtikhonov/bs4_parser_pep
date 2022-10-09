@@ -9,6 +9,7 @@ from tqdm import tqdm
 
 from configs import configure_argument_parser, configure_logging
 from constants import BASE_DIR, MAIN_DOC_URL, EXPECTED_STATUS, MAIN_PEP_URL
+from exceptions import ListPythonVersionsNotFound
 from outputs import control_output
 from utils import get_response, find_tag
 
@@ -50,7 +51,7 @@ def latest_versions(session):
             a_tags = ul.find_all('a')
             break
         else:
-            raise Exception('Ничего не нашлось')
+            raise ListPythonVersionsNotFound("Не найден список с версиями Python.")
     results = [('Ссылка на документацию', 'Версия', 'Статус')]
     pattern = r'Python (?P<version>\d\.\d+) \((?P<status>.*)\)'
     for a_tag in a_tags:
@@ -86,6 +87,7 @@ def download(session):
 
 
 def parse_pep_status(count_status_in_card, peps_row, session):
+    #for i in tqdm(range(1, len(peps_row))):
     for i in range(1, len(peps_row)):
         pep_href = peps_row[i].a['href']
         pep_link = urljoin(MAIN_PEP_URL, pep_href)
@@ -99,21 +101,18 @@ def parse_pep_status(count_status_in_card, peps_row, session):
                 card_status = tag.next_sibling.next_sibling.string
                 count_status_in_card[card_status] = count_status_in_card.get(
                     card_status, 0) + 1
-                if len(peps_row[i].td.text) != 1:
+                if len(peps_row[i].td.text) != 1 and card_status[0] != peps_row[i].td.text[1:]:
                     table_status = peps_row[i].td.text[1:]
-                    if card_status[0] != table_status:
-                        logging.info(
-                            '\n'
-                            'Несовпадающие статусы:\n'
-                            f'{pep_link}\n'
-                            f'Статус в карточке: {card_status}\n'
-                            f'Ожидаемые статусы: '
-                            f'{EXPECTED_STATUS[table_status]}\n'
-                        )
-
+                    logging.info(
+                        '\n'
+                        'Несовпадающие статусы:\n'
+                        f'{pep_link}\n'
+                        f'Статус в карточке: {card_status}\n'
+                        f'Ожидаемые статусы: '
+                        f'{EXPECTED_STATUS[table_status]}\n'
+                    )
 
 def pep(session):
-    print(type(session))
     response = get_response(session, MAIN_PEP_URL)
     soup = BeautifulSoup(response.text, 'lxml')
     main_tag = find_tag(soup, 'section', {'id': 'numerical-index'})
@@ -124,7 +123,6 @@ def pep(session):
     for key in count_status_in_card:
         result.append((key, str(count_status_in_card[key])))
     result.append(('Total', len(peps_row)-1))
-    print(type(result[1]))
     return result
 
 

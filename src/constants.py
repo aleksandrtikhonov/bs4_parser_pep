@@ -7,7 +7,9 @@ DATETIME_FORMAT = '%Y-%m-%d_%H-%M-%S'
 DT_FORMAT = '%d.%m.%Y %H:%M:%S'
 LOG_FORMAT = '"%(asctime)s - [%(levelname)s] - %(message)s"'
 LOG_DIR = BASE_DIR / 'logs'
+LOG_FILE = LOG_DIR / 'parser.log'
 RESULTS_DIR = BASE_DIR / 'results'
+DOWNLOADS_DIR = BASE_DIR / 'downloads'
 EXPECTED_STATUS = {
     'A': ['Active', 'Accepted'],
     'D': ['Deferred'],

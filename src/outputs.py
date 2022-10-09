@@ -4,7 +4,7 @@ from datetime import datetime
 
 from prettytable import PrettyTable
 
-from constants import BASE_DIR, DATETIME_FORMAT
+from constants import DATETIME_FORMAT, BASE_DIR
 
 
 def control_output(results, cli_args):
